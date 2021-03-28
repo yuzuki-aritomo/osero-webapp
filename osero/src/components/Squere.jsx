@@ -1,18 +1,22 @@
 import React from "react";
 
-const style = {
-    'width': '50px',
-    'height': '50px',
-    'border': 'solid 1px #000',
-    'backgroundColor' : '#339933',
-    'outline': 'none',
-}
+import styles from "./Board.module.css";
 
 class Squere extends React.Component {
     render(){
+        let peiceStyle;
+        if(this.props.value === 0){
+            peiceStyle = styles.buttonNormal
+        }else if(this.props.value === 1){
+            peiceStyle = styles.buttonBlack
+        }else if(this.props.value === 2){
+            peiceStyle = styles.buttonWhite
+        }
         return(
-            <button style={ style } onClick={ ()=>this.props.onClick() }>
-                { this.props.value }
+            <button className={`${styles.button} ${peiceStyle}`} onClick={ ()=>this.props.onClick() }>
+                { 
+                    this.props.value
+                }
             </button>
         )
     };

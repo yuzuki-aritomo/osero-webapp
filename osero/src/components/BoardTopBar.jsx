@@ -8,8 +8,8 @@ class BoardTopBar extends React.Component {
         const player = this.props.PlayerPiece===BlackPiece ? 'Black' : 'White'
         return(
             <div className={ styles.Bar }>
-                <div>Black : { this.props.CountBlack }</div>
-                <div>White : { this.props.CountWhite }</div>
+                <div>Black : { this.props.CountPiece.Black }</div>
+                <div>White : { this.props.CountPiece.White }</div>
                 <div>Player : { player }</div>
             </div>
         )

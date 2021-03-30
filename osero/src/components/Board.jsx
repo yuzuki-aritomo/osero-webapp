@@ -1,6 +1,8 @@
 import React from "react";
 import Squere from "./Squere";
+import BoardTopBar from "./BoardTopBar";
 import styles from "./Board.module.css";
+
 const NoPiece = 0;
 const BlackPiece = 1;
 const WhitePiece = 2;
@@ -19,9 +21,13 @@ class Board extends React.Component {
         squares[3][4] = BlackPiece;
         squares[4][3] = BlackPiece;
         const PlayerPiece = WhitePiece;
+        const CountBlack = 2;
+        const CountWhite = 2;
         this.state = {
             squares: squares,
             PlayerPiece: PlayerPiece,
+            CountBlack: CountBlack,
+            CountWhite: CountWhite,
         };
     }
     //マウントしたあとに呼び出す関数
@@ -43,6 +49,7 @@ class Board extends React.Component {
         }
         await this.PutPiece(i, j)
         await this.ColoredCanPutPiece()
+        await this.CounterPiece()
     }
     //コマを置けるかのチェック
     CheckPutPiece(i, j){
@@ -59,7 +66,6 @@ class Board extends React.Component {
         const X = [ 0, 1, 1, 1, 0,-1,-1,-1];
         const Y = [-1,-1, 0, 1, 1, 1, 0,-1];
         const squares = this.state.squares.slice();
-        // console.log(i, j);
         //8方向の相手のコマを裏返す
         for(let k = 0; k<8; k++){
             var x = i+X[k]
@@ -125,18 +131,42 @@ class Board extends React.Component {
             squares: squares
         });
     }
+    //黒と白のピースを数える
+    CounterPiece(){
+        const squares = this.state.squares.slice();
+        let CountBlack = 0;
+        let CountWhite = 0;
+        for(let i=0; i<8; i++){
+            for(let j=0; j<8; j++){
+                if(squares[i][j] === BlackPiece){ CountBlack++ }
+                if(squares[i][j] === WhitePiece){ CountWhite++ }
+            }
+        }
+        this.setState({
+            CountBlack: CountBlack,
+            CountWhite: CountWhite,
+        })
+    }
     render(){
         return(
             <div>
-                <div className={styles.BoardLine}>{ this.renderSquereLine(0) }</div>
-                <div className={styles.BoardLine}>{ this.renderSquereLine(1) }</div>
-                <div className={styles.BoardLine}>{ this.renderSquereLine(2) }</div>
-                <div className={styles.BoardLine}>{ this.renderSquereLine(3) }</div>
-                <div className={styles.BoardLine}>{ this.renderSquereLine(4) }</div>
-                <div className={styles.BoardLine}>{ this.renderSquereLine(5) }</div>
-                <div className={styles.BoardLine}>{ this.renderSquereLine(6) }</div>
-                <div className={styles.BoardLine}>{ this.renderSquereLine(7) }</div>
+                <BoardTopBar 
+                    PlayerPiece={this.state.PlayerPiece}
+                    CountBlack={ this.state.CountBlack }
+                    CountWhite={ this.state.CountWhite }
+                />
+                <div>
+                    <div className={styles.BoardLine}>{ this.renderSquereLine(0) }</div>
+                    <div className={styles.BoardLine}>{ this.renderSquereLine(1) }</div>
+                    <div className={styles.BoardLine}>{ this.renderSquereLine(2) }</div>
+                    <div className={styles.BoardLine}>{ this.renderSquereLine(3) }</div>
+                    <div className={styles.BoardLine}>{ this.renderSquereLine(4) }</div>
+                    <div className={styles.BoardLine}>{ this.renderSquereLine(5) }</div>
+                    <div className={styles.BoardLine}>{ this.renderSquereLine(6) }</div>
+                    <div className={styles.BoardLine}>{ this.renderSquereLine(7) }</div>
+                </div>
             </div>
+            
         );
     }
 }

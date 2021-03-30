@@ -1,7 +1,12 @@
+/*---  BoardComponent Css  ---*/
 .BoardLine{
     display: flex;
 }
-/*---  SquereComponents Css  ---*/
+/*---  BoardTopBar Css  ---*/
+.Bar{
+    display: flex;
+}
+/*---  SquereComponent Css  ---*/
 .SquereButton{
     width: 50px;
     height: 50px;
@@ -35,10 +40,3 @@
     height: 30%;
     background-color: red;
 }
-/* .pieceCanPut::before{
-    content: "a";
-    display: block;
-    width: 10px;
-    height: 10px;
-    background-color: red;
-} */

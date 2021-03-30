@@ -4,7 +4,7 @@ import Squere from "./Squere";
 const NoPiece = 0;
 const BlackPiece = 1;
 const WhitePiece = 2;
-const CanPiece = 3;
+const CanPutPiece = 3;
 
 class Board extends React.Component {
     constructor(props){
@@ -18,9 +18,15 @@ class Board extends React.Component {
         squares[4][4] = WhitePiece;
         squares[3][4] = BlackPiece;
         squares[4][3] = BlackPiece;
+        const PlayerPiece = WhitePiece;
         this.state = {
             squares: squares,
+            PlayerPiece: PlayerPiece,
         };
+    }
+    //マウントしたあとに呼び出す関数
+    componentDidMount(){
+        this.ColoredCanPutPiece()
     }
     //盤面の横列の作成
     renderSquereLine(i){
@@ -30,47 +36,94 @@ class Board extends React.Component {
         };
         return Line
     }
-    //ピースクリック処理
-    handleClick(i, j){
+    //ピースをクリックしたときの処理
+    async handleClick(i, j){
         if(!this.CheckPutPiece(i, j)){
             return
         }
-        this.PutPiece(i, j, BlackPiece)
+        await this.PutPiece(i, j)
+        await this.ColoredCanPutPiece()
     }
     //コマを置けるかのチェック
     CheckPutPiece(i, j){
         const squares = this.state.squares.slice();
-        if(squares[i][j] != NoPiece){
-            return false
+        if(squares[i][j] === CanPutPiece){
+            return true
         }
-        return true
+        return false
     }
     //ピースを置いたときの処理
-    PutPiece(i, j, PlayerPiece){
-        const EnemyPiece = PlayerPiece == BlackPiece ? WhitePiece : BlackPiece
+    PutPiece(i, j){
+        const PlayerPiece = this.state.PlayerPiece
+        const EnemyPiece = PlayerPiece === BlackPiece ? WhitePiece : BlackPiece
         const X = [ 0, 1, 1, 1, 0,-1,-1,-1];
         const Y = [-1,-1, 0, 1, 1, 1, 0,-1];
-        console.log(i, j);
         const squares = this.state.squares.slice();
+        // console.log(i, j);
         //8方向の相手のコマを裏返す
         for(let k = 0; k<8; k++){
-            if(squares[i+X[k]][j+Y[k]] == EnemyPiece){
-                var x = i+X[k]
-                var y = j+Y[k]
-                var loop = 0
-                while(squares[x][y] == EnemyPiece){
-                    x += X[k]
-                    y += Y[k]
-                    loop += 1
-                    if(squares[x][y] == PlayerPiece){
-                        for(let l = 0; l<=loop; l++){
-                            squares[i + X[k]*l][j + Y[k]*l] = PlayerPiece
+            var x = i+X[k]
+            var y = j+Y[k]
+            var loop = 0
+            if(x>=0 && x<8 && y>=0 && y<8){
+                if(squares[x][y] === EnemyPiece){
+                    while(squares[x][y] === EnemyPiece){
+                        x += X[k]
+                        y += Y[k]
+                        loop += 1
+                        if(!(x>=0 && x<8 && y>=0 && y<8)){break}
+                        if(squares[x][y] === PlayerPiece){
+                            for(let l = 0; l<=loop; l++){
+                                squares[i + X[k]*l][j + Y[k]*l] = PlayerPiece
+                            }
                         }
                     }
                 }
             }
         }
-        this.setState({squares: squares});
+        this.setState({
+            squares: squares,
+            PlayerPiece: EnemyPiece
+        });
+    }
+    //コマを置ける位置を表示
+    ColoredCanPutPiece(){
+        const PlayerPiece = this.state.PlayerPiece
+        const EnemyPiece = PlayerPiece === BlackPiece ? WhitePiece : BlackPiece
+        const X = [ 0, 1, 1, 1, 0,-1,-1,-1];
+        const Y = [-1,-1, 0, 1, 1, 1, 0,-1];
+        // console.log(i, j);
+        const squares = this.state.squares.slice();
+        //全面の処理
+        for(let i=0;i<8;i++){
+            for(let j=0;j<8;j++){
+                //前の置ける位置は消す
+                if(squares[i][j] === CanPutPiece){squares[i][j] = NoPiece}
+                if(squares[i][j] === NoPiece){
+                    for(let k = 0; k<8; k++){
+                        var x = i+X[k]
+                        var y = j+Y[k]
+                        if(x>=0 && x<8 && y>=0 && y<8){
+                            if(squares[i+X[k]][j+Y[k]] === EnemyPiece){
+                                // var loop = 0
+                                while(squares[x][y] === EnemyPiece){
+                                    x += X[k]
+                                    y += Y[k]
+                                    // loop += 1
+                                    if(!(x>=0 && x<8 && y>=0 && y<8)){break}
+                                    if(squares[x][y] === PlayerPiece){
+                                        squares[i][j] = CanPutPiece
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        this.setState({
+            squares: squares
+        });
     }
     render(){
         return(

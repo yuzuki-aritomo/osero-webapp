@@ -11,7 +11,10 @@ class Squere extends React.Component {
             peiceStyle = styles.buttonBlack
         }else if(this.props.value === 2){
             peiceStyle = styles.buttonWhite
+        }else if(this.props.value === 3){
+            peiceStyle = styles.buttonCan
         }
+
         return(
             <button className={`${styles.button} ${peiceStyle}`} onClick={ ()=>this.props.onClick() }>
                 { 

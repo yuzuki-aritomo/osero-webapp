@@ -1,6 +1,6 @@
 import React from "react";
 import Squere from "./Squere";
-
+import styles from "./Board.module.css";
 const NoPiece = 0;
 const BlackPiece = 1;
 const WhitePiece = 2;
@@ -128,14 +128,14 @@ class Board extends React.Component {
     render(){
         return(
             <div>
-                <div>{ this.renderSquereLine(0) }</div>
-                <div>{ this.renderSquereLine(1) }</div>
-                <div>{ this.renderSquereLine(2) }</div>
-                <div>{ this.renderSquereLine(3) }</div>
-                <div>{ this.renderSquereLine(4) }</div>
-                <div>{ this.renderSquereLine(5) }</div>
-                <div>{ this.renderSquereLine(6) }</div>
-                <div>{ this.renderSquereLine(7) }</div>
+                <div className={styles.BoardLine}>{ this.renderSquereLine(0) }</div>
+                <div className={styles.BoardLine}>{ this.renderSquereLine(1) }</div>
+                <div className={styles.BoardLine}>{ this.renderSquereLine(2) }</div>
+                <div className={styles.BoardLine}>{ this.renderSquereLine(3) }</div>
+                <div className={styles.BoardLine}>{ this.renderSquereLine(4) }</div>
+                <div className={styles.BoardLine}>{ this.renderSquereLine(5) }</div>
+                <div className={styles.BoardLine}>{ this.renderSquereLine(6) }</div>
+                <div className={styles.BoardLine}>{ this.renderSquereLine(7) }</div>
             </div>
         );
     }

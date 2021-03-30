@@ -4,23 +4,20 @@ import styles from "./Board.module.css";
 
 class Squere extends React.Component {
     render(){
-        let peiceStyle;
+        let pieceStyle = styles.pieceNone
         if(this.props.value === 0){
-            peiceStyle = styles.buttonNormal
+            pieceStyle = styles.pieceNone
         }else if(this.props.value === 1){
-            peiceStyle = styles.buttonBlack
+            pieceStyle = styles.pieceBlack
         }else if(this.props.value === 2){
-            peiceStyle = styles.buttonWhite
+            pieceStyle = styles.pieceWhite
         }else if(this.props.value === 3){
-            peiceStyle = styles.buttonCan
+            pieceStyle = styles.pieceCanPut
         }
-
         return(
-            <button className={`${styles.button} ${peiceStyle}`} onClick={ ()=>this.props.onClick() }>
-                { 
-                    this.props.value
-                }
-            </button>
+            <div className={`${styles.SquereButton}`} onClick={ ()=>this.props.onClick() }>
+                <div className={`${ pieceStyle }`}></div>
+            </div>
         )
     };
 }

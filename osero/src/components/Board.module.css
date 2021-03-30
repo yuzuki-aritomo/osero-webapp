@@ -1,18 +1,44 @@
-.button{
+.BoardLine{
+    display: flex;
+}
+/*---  SquereComponents Css  ---*/
+.SquereButton{
     width: 50px;
     height: 50px;
     border: solid 1px #000;
     outline: none;
-}
-.buttonNormal{
     background-color: #339933;
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.buttonBlack{
-    background-color: #666;
+.pieceNone{
+    display: none;
 }
-.buttonWhte{
+.pieceBlack{
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    background-color: #000;
+}
+.pieceWhite{
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
     background-color: #fff;
 }
-.buttonCan{
-    background-color: aqua;
+.pieceCanPut{
+    width: 30%;
+    height: 30%;
+    background-color: red;
 }
+/* .pieceCanPut::before{
+    content: "a";
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+} */

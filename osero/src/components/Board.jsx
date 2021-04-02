@@ -204,9 +204,13 @@ class Board extends React.Component {
     //Comの手番の処理
     async ConputerPutPiece(){
         const squares = this.state.squares.slice();
-        var Com = new Computer();
-        var Turn = await Com.Comput(squares)
-        this.handleClickComputer(Turn[0], Turn[1])
+        try{
+            var Com = new Computer();
+            var Turn = await Com.Comput(squares)
+            this.handleClickComputer(Turn[0], Turn[1])
+        }catch(e){
+            console.log(e)
+        }
     }
     //ゲームが終了した時の処理
     GameSet(){
@@ -216,9 +220,9 @@ class Board extends React.Component {
         if(CountBlack === CountWhite){
             console.log('引き分け')
         }else if(CountBlack < CountWhite){
-            console.log('Black win')
-        }else if(CountBlack > CountWhite){
             console.log('White win')
+        }else if(CountBlack > CountWhite){
+            console.log('Black win')
         }
     }
     render(){

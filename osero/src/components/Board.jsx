@@ -206,7 +206,7 @@ class Board extends React.Component {
         const squares = this.state.squares.slice();
         try{
             var Com = new Computer();
-            var Turn = await Com.Comput(squares)
+            var Turn = await Com.Comput(squares, 2)
             this.handleClickComputer(Turn[0], Turn[1])
         }catch(e){
             console.log(e)

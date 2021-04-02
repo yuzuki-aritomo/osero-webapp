@@ -2,6 +2,7 @@ import React from "react";
 import Squere from "./Squere";
 import BoardTopBar from "./BoardTopBar";
 import styles from "./Board.module.css";
+import Computer from './Computer.js';
 
 const NoPiece = 0;
 const BlackPiece = 1;
@@ -21,6 +22,7 @@ class Board extends React.Component {
         squares[3][4] = BlackPiece;
         squares[4][3] = BlackPiece;
         const PlayerPiece = BlackPiece;
+        const NowPlaying = BlackPiece;
         const CountPiece = {
             Black: 2,
             White: 2,
@@ -32,6 +34,7 @@ class Board extends React.Component {
         this.state = {
             squares: squares,
             PlayerPiece: PlayerPiece,
+            NowPlaying: NowPlaying,
             CountPiece: CountPiece,
             CountCanPutPiece: CountCanPutPiece,
         };
@@ -48,7 +51,7 @@ class Board extends React.Component {
         };
         return Line
     }
-    //ピースをクリックしたときの処理
+    //人間のプレイヤーがピースをクリックしたときの処理
     async handleClick(i, j){
         if(!this.CheckPutPiece(i, j)){
             return
@@ -58,18 +61,27 @@ class Board extends React.Component {
         await this.CounterPiece()
         await this.CheckGame()
     }
+    //Comのプレイヤーがピースをクリックしたときの処理
+    async handleClickComputer(i, j){
+        await this.PutPiece(i, j)
+        await this.ColoredCanPutPiece()
+        await this.CounterPiece()
+        await this.CheckGame()
+    }
     //コマを置けるかのチェック
     CheckPutPiece(i, j){
         const squares = this.state.squares.slice();
-        if(squares[i][j] === CanPutPiece){
+        const PlayerPiece = this.state.PlayerPiece;
+        const NowPlaying = this.state.NowPlaying;
+        if(squares[i][j] === CanPutPiece && NowPlaying === PlayerPiece){
             return true
         }
         return false
     }
     //ピースを置いたときの処理
     PutPiece(i, j){
-        const PlayerPiece = this.state.PlayerPiece
-        const EnemyPiece = PlayerPiece === BlackPiece ? WhitePiece : BlackPiece
+        const NowPlaying = this.state.NowPlaying
+        const EnemyPiece = NowPlaying === BlackPiece ? WhitePiece : BlackPiece
         const X = [ 0, 1, 1, 1, 0,-1,-1,-1];
         const Y = [-1,-1, 0, 1, 1, 1, 0,-1];
         const squares = this.state.squares.slice();
@@ -85,9 +97,9 @@ class Board extends React.Component {
                         y += Y[k]
                         loop += 1
                         if(!(x>=0 && x<8 && y>=0 && y<8)){break}
-                        if(squares[x][y] === PlayerPiece){
+                        if(squares[x][y] === NowPlaying){
                             for(let l = 0; l<=loop; l++){
-                                squares[i + X[k]*l][j + Y[k]*l] = PlayerPiece
+                                squares[i + X[k]*l][j + Y[k]*l] = NowPlaying
                             }
                         }
                     }
@@ -96,13 +108,13 @@ class Board extends React.Component {
         }
         this.setState({
             squares: squares,
-            PlayerPiece: EnemyPiece
+            NowPlaying: EnemyPiece
         });
     }
     //コマを置ける位置を表示
     ColoredCanPutPiece(){
-        const PlayerPiece = this.state.PlayerPiece
-        const EnemyPiece = PlayerPiece === BlackPiece ? WhitePiece : BlackPiece
+        const NowPlaying = this.state.NowPlaying
+        const EnemyPiece = NowPlaying === BlackPiece ? WhitePiece : BlackPiece
         const X = [ 0, 1, 1, 1, 0,-1,-1,-1];
         const Y = [-1,-1, 0, 1, 1, 1, 0,-1];
         const squares = this.state.squares.slice();
@@ -123,7 +135,7 @@ class Board extends React.Component {
                                     y += Y[k]
                                     // loop += 1
                                     if(!(x>=0 && x<8 && y>=0 && y<8)){break}
-                                    if(squares[x][y] === PlayerPiece){
+                                    if(squares[x][y] === NowPlaying){
                                         squares[i][j] = CanPutPiece
                                     }
                                 }
@@ -139,7 +151,7 @@ class Board extends React.Component {
     }
     //黒と白と設置可能なピースを数える
     CounterPiece(){
-        const PlayerPiece = this.state.PlayerPiece
+        const NowPlaying = this.state.NowPlaying
         const squares = this.state.squares.slice();
         let CountPiece = Object.create(this.state.CountPiece);
         let CountCanPutPiece = Object.create(this.state.CountCanPutPiece);
@@ -155,7 +167,7 @@ class Board extends React.Component {
         }
         CountPiece.Black = CountBlack;
         CountPiece.White = CountWhite;
-        if(PlayerPiece === BlackPiece){
+        if(NowPlaying === BlackPiece){
             CountCanPutPiece.Black = CountCanPut
         }else{
             CountCanPutPiece.White = CountCanPut
@@ -168,25 +180,52 @@ class Board extends React.Component {
     //ゲームセットの確認(true: gameset)、置けるコマがない場合プレイヤー交代
     async CheckGame(){
         const PlayerPiece = this.state.PlayerPiece
-        const EnemyPiece = PlayerPiece === BlackPiece ? WhitePiece : BlackPiece
+        const NowPlaying = this.state.NowPlaying
+        const EnemyPiece = NowPlaying === BlackPiece ? WhitePiece : BlackPiece
         const CountCanPutPiece = this.state.CountCanPutPiece
+        //置けるコマが両方ゼロの場合に終了
         if(CountCanPutPiece.Black === 0 && CountCanPutPiece.White===0){
-            console.log("Game Set")
+            this.GameSet()
         }else if(
-                (CountCanPutPiece.Black === 0 && PlayerPiece === BlackPiece) ||
-                (CountCanPutPiece.White === 0 && PlayerPiece === WhitePiece)
+                //どっちかのコマがおけない場合手番交代
+                (CountCanPutPiece.Black === 0 && NowPlaying === BlackPiece) ||
+                (CountCanPutPiece.White === 0 && NowPlaying === WhitePiece)
             ){
-            this.state.PlayerPiece = EnemyPiece
+            this.setState({NowPlaying : EnemyPiece})
             await this.ColoredCanPutPiece()
             await this.CounterPiece()
             this.CheckGame()
+        }
+        //手番がComの時
+        else if(NowPlaying !== PlayerPiece ){
+            this.ConputerPutPiece()
+        }
+    }
+    //Comの手番の処理
+    async ConputerPutPiece(){
+        const squares = this.state.squares.slice();
+        var Com = new Computer();
+        var Turn = await Com.Comput(squares)
+        this.handleClickComputer(Turn[0], Turn[1])
+    }
+    //ゲームが終了した時の処理
+    GameSet(){
+        const CountPiece = this.state.CountPiece
+        const CountBlack = CountPiece.Black
+        const CountWhite = CountPiece.White
+        if(CountBlack === CountWhite){
+            console.log('引き分け')
+        }else if(CountBlack < CountWhite){
+            console.log('Black win')
+        }else if(CountBlack > CountWhite){
+            console.log('White win')
         }
     }
     render(){
         return(
             <div>
                 <BoardTopBar 
-                    PlayerPiece={this.state.PlayerPiece}
+                    PlayerPiece={this.state.NowPlaying}
                     CountPiece={ this.state.CountPiece }
                 />
                 <div>

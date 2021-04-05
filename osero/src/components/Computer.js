@@ -1,9 +1,12 @@
 
 class Computer{
-    async Comput(squares, CPULV = 1){
-        if(CPULV === 1){
+    constructor(ComLv){
+        this.ComLv = ComLv
+    }
+    async Comput(squares){
+        if(this.ComLv === 1){
             return this.ComPut_randm(squares)
-        }else if(CPULV === 2){
+        }else if(this.ComLv === 2){
             return this.ComPut_wight(squares)
         }
         return this.ComPut_randm(squares)

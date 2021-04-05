@@ -31,10 +31,12 @@ class Board extends React.Component {
             Black: 2,
             White: 2,
         }
+        const ComLv = 2
         this.state = {
             squares: squares,
             PlayerPiece: PlayerPiece,
             NowPlaying: NowPlaying,
+            ComLv: ComLv,
             CountPiece: CountPiece,
             CountCanPutPiece: CountCanPutPiece,
         };
@@ -205,7 +207,7 @@ class Board extends React.Component {
     async ConputerPutPiece(){
         const squares = this.state.squares.slice();
         try{
-            var Com = new Computer();
+            var Com = new Computer(this.state.ComLv);
             var Turn = await Com.Comput(squares, 2)
             this.handleClickComputer(Turn[0], Turn[1])
         }catch(e){

@@ -21,16 +21,20 @@ class Board extends React.Component {
         squares[4][4] = WhitePiece;
         squares[3][4] = BlackPiece;
         squares[4][3] = BlackPiece;
+        //プレイヤーのピースと手番を動かすピース
         const PlayerPiece = BlackPiece;
         const NowPlaying = BlackPiece;
+        //それぞれのコマの数を計算
         const CountPiece = {
             Black: 2,
             White: 2,
         }
+        //置けるコマの数を計算
         const CountCanPutPiece = {
             Black: 2,
             White: 2,
         }
+        //CPUのレベル
         const ComLv = 2
         this.state = {
             squares: squares,
